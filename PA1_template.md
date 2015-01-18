@@ -1,20 +1,17 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output:
-  html_document:
-    keep_md: yes
----
+# Reproducible Research: Peer Assessment 1
 
 
 ####Loading and preprocessing the data.
 
 1. Load the data.
-```{r, echo=TRUE}
+
+```r
 act = read.csv("activity.csv")
 ```
 
 2. Process/transform the data (if necessary) into a format suitable for your analysis.
-```{r}
+
+```r
 stepsdate<-aggregate(steps~date,data=act,sum,na.rm = TRUE)
 ```
 
@@ -22,14 +19,29 @@ stepsdate<-aggregate(steps~date,data=act,sum,na.rm = TRUE)
 ####What is mean total number of steps taken per day?
 
 1. Make a histogram of the total number of steps taken each day.
-```{r}
+
+```r
 hist(stepsdate$steps,xlab="Steps",main="Histogram of Steps Taken Each Day",col = "red")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
 2. Calculate and report the mean and median total number of steps taken per day.
-```{r}
+
+```r
 mean(stepsdate$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(stepsdate$steps)
+```
+
+```
+## [1] 10765
 ```
 The **mean** total number of steps taken per day is 10766.19.
 The **median** total number of steps taken per day is 10765.
@@ -37,22 +49,35 @@ The **median** total number of steps taken per day is 10765.
 ####What is the average daily activity pattern?
 
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).
-```{r}
+
+```r
 stepsinterval<-aggregate(steps~interval, data = act, mean, na.rm = TRUE)
 plot(steps~interval, data= stepsinterval, type = "l")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r}
+
+```r
 stepsinterval[which.max(stepsinterval$steps), ]$interval
+```
+
+```
+## [1] 835
 ```
 It is the 835th interval.
 
 ####Imputing missing values.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs).
-```{r}
+
+```r
 sum(is.na(act$steps))
+```
+
+```
+## [1] 2304
 ```
 The total number of rows with **NA** are 2304. 
 
@@ -67,7 +92,8 @@ mean value.
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r}
+
+```r
 # perform the imputation
 for (i in 1:nrow(act)){
   if (is.na(act$steps[i])){
@@ -78,11 +104,28 @@ for (i in 1:nrow(act)){
 ```
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
-```{r}
+
+```r
 stepsdate_imputed <- aggregate(steps~date, data = act, sum)
 hist(stepsdate_imputed$steps,xlab="Steps",main="Histogram of Steps Taken Each Day (Imputed)",col = "red")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
+
+```r
 mean(stepsdate_imputed$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(stepsdate_imputed$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 The **mean** total number of steps taken per day is 10766.19.
@@ -94,7 +137,8 @@ The impact of imputing missing data is that the number of data in the middle of 
 ####Are there differences in activity patterns between weekdays and weekends?
 
 1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
-```{r}
+
+```r
 # convert date from string to Date class and add a new column
 act$day<- weekdays(as.Date(act$date, "%Y-%m-%d"))
 
@@ -113,11 +157,14 @@ act$day_type <- as.factor(act$day_type)
 ```
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
-```{r}
+
+```r
 stepsinterval_daytype<-aggregate(steps ~ interval+day_type,act,mean)
 library(lattice)
 xyplot(steps ~ interval | factor(day_type),data=stepsinterval_daytype,aspect = 1/2,type = "l")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
 
 
 
